@@ -17,12 +17,21 @@ categories = ["parsing"]
 [badges]
 travis-ci = { repository = "freestrings/jsonpath", branch = "master" }
 
+[target.'cfg(not(target_env = "sgx"))'.dependencies]
+sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", rev="v1.0.8" }
+
 [dependencies]
-log = "0.4"
-env_logger = "0.6"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0", features = ["preserve_order"] }
-array_tool = "1.0.3"
+# log = "0.4"
+# serde = { version = "1.0", features = ["derive"] }
+# serde_json = { version = "1.0", features = ["preserve_order"] }
+# env_logger = "0.6"
+# array_tool = "1.0.3"
+
+log = { git = "https://github.com/mesalock-linux/log-sgx" }
+serde = { git = "https://github.com/mesalock-linux/serde-sgx", features = ["derive"] }
+serde_json = { git = "https://github.com/mesalock-linux/serde-json-sgx", features = ["preserve_order"] }
+env_logger = { git = "https://github.com/mesalock-linux/env_logger-sgx" }
+array_tool = { git = "https://github.com/mesalock-linux/array_tool-sgx"}
 
 [dev-dependencies]
 bencher = "0.1.5"

@@ -1,4 +1,5 @@
 use std::result::Result;
+use std::string::String;
 
 #[derive(Debug, PartialEq)]
 pub enum ReaderError {

@@ -1,4 +1,6 @@
 use std::result::Result;
+use std::string::String;
+use std::vec::Vec;
 
 use super::path_reader::{PathReader, ReaderError};
 

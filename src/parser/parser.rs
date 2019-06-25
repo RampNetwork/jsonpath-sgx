@@ -1,4 +1,7 @@
 use std::str::FromStr;
+use std::boxed::Box;
+use std::string::String;
+use std::vec::Vec;
 
 use super::tokenizer::*;
 
@@ -8,6 +11,7 @@ type ParseResult<T> = Result<T, String>;
 
 mod utils {
     use std::str::FromStr;
+    use std::string::String;
 
     pub fn string_to_num<F, S: FromStr>(string: &String, msg_handler: F) -> Result<S, String>
     where

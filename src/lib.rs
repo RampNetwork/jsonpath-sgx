@@ -122,13 +122,23 @@
 //!                 &json!({"category" : "fiction","author" : "Herman Melville","title" : "Moby Dick","isbn" : "0-553-21311-3","price" : 8.99})
 //!             ]);
 //! ```
+#![feature(rustc_private)]
+#![cfg_attr(not(target_env = "sgx"), no_std)]
+#![cfg_attr(target_env = "sgx", feature(rustc_private))]
+
+#[cfg(not(target_env = "sgx"))]
+#[macro_use]
+extern crate sgx_tstd as std;
+
 extern crate array_tool;
-extern crate core;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
 extern crate serde;
 extern crate serde_json;
+
+use std::string::{String, ToString};
+use std::vec::Vec;
 
 use serde_json::Value;
 
