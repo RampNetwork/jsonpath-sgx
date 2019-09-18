@@ -27,11 +27,11 @@ sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", rev="v1.0.8" }
 # env_logger = "0.6"
 # array_tool = "1.0.3"
 
-log = { git = "https://github.com/mesalock-linux/log-sgx" }
-serde = { git = "https://github.com/mesalock-linux/serde-sgx", features = ["derive"] }
-serde_json = { git = "https://github.com/mesalock-linux/serde-json-sgx", features = ["preserve_order"] }
-env_logger = { git = "https://github.com/mesalock-linux/env_logger-sgx" }
-array_tool = { git = "https://github.com/mesalock-linux/array_tool-sgx"}
+log = { git = "https://github.com/piotr-roslaniec/log-sgx", tag = "sgx-v1.0.8" }
+serde = { git = "https://github.com/piotr-roslaniec/serde-sgx", tag = "sgx-v1.0.8", features = ["derive"] }
+serde_json = { git = "https://github.com/piotr-roslaniec/serde-json-sgx", tag = "sgx-v1.0.8", features = ["preserve_order"] }
+env_logger = { git = "https://github.com/piotr-roslaniec/env_logger-sgx", tag = "sgx-v1.0.8" }
+array_tool = { git = "https://github.com/piotr-roslaniec/array_tool-sgx", tag = "sgx-v1.0.8" }
 
 [dev-dependencies]
 bencher = "0.1.5"
