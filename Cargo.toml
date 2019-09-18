@@ -18,7 +18,7 @@ categories = ["parsing"]
 travis-ci = { repository = "freestrings/jsonpath", branch = "master" }
 
 [target.'cfg(not(target_env = "sgx"))'.dependencies]
-sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", rev="v1.0.8" }
+sgx_tstd = { git = "https://github.com/baidu/rust-sgx-sdk", rev="v1.0.9" }
 
 [dependencies]
 # log = "0.4"
