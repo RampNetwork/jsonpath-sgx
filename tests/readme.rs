@@ -173,7 +173,7 @@ fn readme_selector() {
             {"name": "친구4"}
     ]});
 
-    let mut selector = Selector::new();
+    let mut selector = Selector::default();
 
     let result = selector
         .str_path("$..[?(@.age >= 30)]")
@@ -211,7 +211,7 @@ fn readme_selector_mut() {
             {"name": "친구4"}
     ]});
 
-    let mut selector_mut = SelectorMut::new();
+    let mut selector_mut = SelectorMut::default();
 
     let result = selector_mut
         .str_path("$..[?(@.age == 20)].age")
@@ -224,7 +224,7 @@ fn readme_selector_mut() {
                 0
             };
 
-            json!(age)
+            Some(json!(age))
         })
         .unwrap()
         .take()
@@ -482,7 +482,7 @@ fn readme_delete() {
 
 #[test]
 fn readme_delete2() {
-    let json_obj = common::read_json("./benches/example.json");
+    let json_obj = common::read_json("./benchmark/example.json");
 
     let ret = jsonpath::delete(json_obj, "$.store.book").unwrap();
 
@@ -522,7 +522,7 @@ fn readme_replace_with() {
             0
         };
 
-        json!(age)
+        Some(json!(age))
     })
     .unwrap();
 

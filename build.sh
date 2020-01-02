@@ -11,7 +11,7 @@ WASM_BROWSER_PKG="${WASM}"/browser_pkg
 WASM_NODEJS_PKG="${WASM}"/nodejs_pkg
 WASM_ALL_PKG="${WASM}"/all_pkg
 WASM_TEST="${WASM}"/tests
-BENCHES="${DIR}"/benches
+BENCHES="${DIR}"/benchmark
 BENCHES_JS="${BENCHES}"/javascript
 NODEJS="${DIR}"/nodejs
 DOCS="${DIR}"/docs
@@ -27,6 +27,16 @@ __cargo_clean () {
         cd "${WASM}" && cargo clean && \
         cd "${DIR}" && cargo clean
 }
+
+if [ "$1" = "clippy" ]
+then
+    echo
+    __msg "clippy"
+    cargo clippy -- -D warnings && \
+    cargo clippy --all-targets --all-features -- -D warnings -A clippy::cognitive_complexity && \
+    cd "${WASM}" && cargo clippy -- -A clippy::suspicious_else_formatting && \
+    cd "${NODEJS}" && cargo clippy
+fi
 
 echo
 __msg "clean"

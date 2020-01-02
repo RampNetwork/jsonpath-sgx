@@ -6,7 +6,7 @@ authors = ["Changseok Han <freestrings@gmail.com>"]
 description = "It is JsonPath engine written in Rust. it provide a similar API interface in Webassembly and Javascript too. - Webassembly Demo: https://freestrings.github.io/jsonpath"
 readme = "README.md"
 
-keywords = ["jsonpath", "json", "webassembly", "nodejs", "javascript"]
+keywords = ["jsonpath", "json", "webassembly", "nodejs", "query"]
 
 repository = "https://github.com/freestrings/jsonpath"
 documentation = "https://docs.rs/jsonpath_lib/0.1.0/jsonpath_lib"
@@ -33,12 +33,10 @@ serde_json = { git = "https://github.com/mesalock-linux/serde-json-sgx", feature
 env_logger = { git = "https://github.com/mesalock-linux/env_logger-sgx" }
 array_tool = { git = "https://github.com/mesalock-linux/array_tool-sgx"}
 
-[dev-dependencies]
-bencher = "0.1.5"
-
 [lib]
 name = "jsonpath_lib"
 path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
 
 [profile.release]
 #debug = true

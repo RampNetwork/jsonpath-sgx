@@ -19,7 +19,7 @@ fn read_json(path: &str) -> String {
 }
 
 fn get_string() -> String {
-    read_json("./benches/example.json")
+    read_json("./example.json")
 }
 
 fn get_json() -> Value {
@@ -53,7 +53,7 @@ fn _selector(b: &mut Bencher, index: usize) {
     let json = get_json();
     b.iter(move || {
         for _ in 1..100 {
-            let mut selector = jsonpath::Selector::new();
+            let mut selector = jsonpath::Selector::default();
             let _ = selector.str_path(get_path(index));
             selector.value(&json);
             let r = selector.select();
