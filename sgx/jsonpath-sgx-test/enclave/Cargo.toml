@@ -2,6 +2,7 @@
 name = "Helloworldsampleenclave"
 version = "1.0.0"
 authors = ["Baidu"]
+edition = "2018"
 
 [lib]
 name = "helloworldsampleenclave"
@@ -12,8 +13,14 @@ default = []
 
 [dependencies]
 jsonpath_lib = { path = "../../../../jsonpath-sgx"}
+log = { git = "https://github.com/mesalock-linux/log-sgx" }
+serde = { git = "https://github.com/mesalock-linux/serde-sgx", features = ["derive"] }
+serde_json = { git = "https://github.com/mesalock-linux/serde-json-sgx", features = ["preserve_order"] }
+env_logger = { git = "https://github.com/mesalock-linux/env_logger-sgx" }
+array_tool = { git = "https://github.com/mesalock-linux/array_tool-sgx" }
 
 [target.'cfg(not(target_env = "sgx"))'.dependencies]
 sgx_types = { rev = "v1.1.0", git = "https://github.com/apache/teaclave-sgx-sdk.git" }
 sgx_tstd = { rev = "v1.1.0", git = "https://github.com/apache/teaclave-sgx-sdk.git" }
+sgx_trts = { rev = "v1.1.0", git = "https://github.com/apache/teaclave-sgx-sdk.git" }
 sgx_tunittest = { rev = "v1.1.0", git = "https://github.com/apache/teaclave-sgx-sdk.git" }

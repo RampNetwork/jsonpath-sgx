@@ -1,21 +1,16 @@
-extern crate jsonpath_lib as jsonpath;
-extern crate serde;
-#[macro_use]
-extern crate serde_json;
+use std::prelude::v1::*;
 
 use serde::Deserialize;
 use serde_json::Value;
-
-use common::{compare_result, read_contents, read_json, setup};
 use jsonpath::JsonPathError;
 
-mod common;
+use crate::common::{compare_result, read_contents, read_json, setup};
 
-#[test]
-fn compile() {
+//#[test]
+pub fn compile() {
     let compile_object = |path| {
         let mut template = jsonpath::compile(path);
-        let json_obj = read_json("./benchmark/data_obj.json");
+        let json_obj = read_json("data_obj.json");
         let json = template(&json_obj).unwrap();
         let ret = json!([
             {"id": 2,"name": "Gray Berry"},
@@ -26,7 +21,7 @@ fn compile() {
 
     let compile_array = |path| {
         let mut template = jsonpath::compile(path);
-        let json_obj = read_json("./benchmark/data_array.json");
+        let json_obj = read_json("data_array.json");
         let json = template(&json_obj).unwrap();
         let ret = json!([
             {"id": 2,"name": "Gray Berry"},
@@ -35,7 +30,7 @@ fn compile() {
         compare_result(json, ret);
     };
 
-    fn compile_error() {
+    pub fn compile_error() {
         let mut template = jsonpath::compile("$[");
         assert!(template(&Value::Null).is_err());
     }
@@ -47,11 +42,11 @@ fn compile() {
     compile_error();
 }
 
-#[test]
-fn selector() {
+//#[test]
+pub fn selector() {
     setup();
 
-    fn select<'a, F>(selector: &mut F, path: &'a str, target: Value)
+    pub fn select<'a, F>(selector: &mut F, path: &'a str, target: Value)
     where
         F: FnMut(&'a str) -> Result<Vec<&Value>, JsonPathError>,
     {
@@ -59,7 +54,7 @@ fn selector() {
         compare_result(json, target);
     };
 
-    let json_obj = read_json("./benchmark/data_obj.json");
+    let json_obj = read_json("data_obj.json");
     let mut selector = jsonpath::selector(&json_obj);
 
     select(
@@ -80,15 +75,15 @@ fn selector() {
     );
 }
 
-#[test]
-fn selector_as() {
+//#[test]
+pub fn selector_as() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Friend {
         id: u8,
         name: Option<String>,
     }
 
-    fn select<'a, F>(selector: &mut F, path: &'a str, target: Vec<Friend>)
+    pub fn select<'a, F>(selector: &mut F, path: &'a str, target: Vec<Friend>)
     where
         F: FnMut(&'a str) -> Result<Vec<Friend>, JsonPathError>,
     {
@@ -96,7 +91,7 @@ fn selector_as() {
         assert_eq!(json, target);
     };
 
-    let json_obj = read_json("./benchmark/data_obj.json");
+    let json_obj = read_json("data_obj.json");
     let mut selector = jsonpath::selector_as::<Friend>(&json_obj);
 
     select(
@@ -127,9 +122,9 @@ fn selector_as() {
     );
 }
 
-#[test]
-fn select() {
-    let json_obj = read_json("./benchmark/example.json");
+//#[test]
+pub fn select() {
+    let json_obj = read_json("example.json");
     let json = jsonpath::select(&json_obj, "$..book[2]").unwrap();
     let ret = json!([{
         "category" : "fiction",
@@ -141,9 +136,9 @@ fn select() {
     compare_result(json, ret);
 }
 
-#[test]
-fn select_str() {
-    let json_str = read_contents("./benchmark/example.json");
+//#[test]
+pub fn select_str() {
+    let json_str = read_contents("example.json");
     let result_str = jsonpath::select_as_str(&json_str, "$..book[2]").unwrap();
     let ret = json!([{
         "category" : "fiction",
@@ -156,8 +151,8 @@ fn select_str() {
     assert_eq!(json, ret);
 }
 
-#[test]
-fn test_to_struct() {
+//#[test]
+pub fn test_to_struct() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Person {
         name: String,

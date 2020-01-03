@@ -1,3 +1,5 @@
+use std::prelude::v1::*;
+
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_void};
 

@@ -1,15 +1,13 @@
-extern crate jsonpath_lib as jsonpath;
-#[macro_use]
-extern crate serde_json;
+use std::vec::Vec;
 
-use common::{read_json, setup};
 use jsonpath::{Parser, Selector, SelectorMut};
 use serde_json::Value;
 
-mod common;
+use crate::common::{read_json, setup};
+use std::string::ToString;
 
-#[test]
-fn selector_mut() {
+//#[test]
+pub fn selector_mut() {
     setup();
 
     let mut selector_mut = SelectorMut::default();
@@ -18,7 +16,7 @@ fn selector_mut() {
     let result = selector_mut
         .str_path(r#"$.store..price"#)
         .unwrap()
-        .value(read_json("./benchmark/example.json"))
+        .value(read_json("example.json"))
         .replace_with(&mut |v| {
             if let Value::Number(n) = v {
                 nums.push(n.as_f64().unwrap());
@@ -54,16 +52,16 @@ fn selector_mut() {
     );
 }
 
-#[test]
-fn selector_node_ref() {
+//#[test]
+pub fn selector_node_ref() {
     let node = Parser::compile("$.*").unwrap();
     let mut selector = Selector::default();
     selector.compiled_path(&node);
     assert!(std::ptr::eq(selector.node_ref().unwrap(), &node));
 }
 
-#[test]
-fn selector_delete() {
+//#[test]
+pub fn selector_delete() {
     setup();
 
     let mut selector_mut = SelectorMut::default();
@@ -71,7 +69,7 @@ fn selector_delete() {
     let result = selector_mut
         .str_path(r#"$.store..price[?(@>13)]"#)
         .unwrap()
-        .value(read_json("./benchmark/example.json"))
+        .value(read_json("example.json"))
         .delete()
         .unwrap()
         .take()
@@ -97,8 +95,8 @@ fn selector_delete() {
     );
 }
 
-#[test]
-fn selector_remove() {
+//#[test]
+pub fn selector_remove() {
     setup();
 
     let mut selector_mut = SelectorMut::default();
@@ -106,7 +104,7 @@ fn selector_remove() {
     let result = selector_mut
         .str_path(r#"$.store..price[?(@>13)]"#)
         .unwrap()
-        .value(read_json("./benchmark/example.json"))
+        .value(read_json("example.json"))
         .remove()
         .unwrap()
         .take()
@@ -120,12 +118,5 @@ fn selector_remove() {
         .select()
         .unwrap();
 
-    assert_eq!(
-        result,
-        vec![
-            &json!(8.95),
-            &json!(12.99),
-            &json!(8.99)
-        ]
-    );
+    assert_eq!(result, vec![&json!(8.95), &json!(12.99), &json!(8.99)]);
 }

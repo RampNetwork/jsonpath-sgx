@@ -1,17 +1,14 @@
-extern crate jsonpath_lib as jsonpath;
-extern crate serde;
-#[macro_use]
-extern crate serde_json;
-
 use serde::Deserialize;
 use serde_json::Value;
-
 use jsonpath::{Selector, SelectorMut};
 
-mod common;
+use crate::common;
 
-#[test]
-fn readme() {
+use std::string::{ToString, String};
+use std::vec::Vec;
+
+//#[test]
+pub fn readme() {
     let json_obj = json!({
         "store": {
             "book": [
@@ -153,8 +150,8 @@ fn readme() {
     );
 }
 
-#[test]
-fn readme_selector() {
+//#[test]
+pub fn readme_selector() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Friend {
         name: String,
@@ -197,8 +194,8 @@ fn readme_selector() {
     );
 }
 
-#[test]
-fn readme_selector_mut() {
+//#[test]
+pub fn readme_selector_mut() {
     let json_obj = json!({
         "school": {
             "friends": [
@@ -246,8 +243,8 @@ fn readme_selector_mut() {
     );
 }
 
-#[test]
-fn readme_select() {
+//#[test]
+pub fn readme_select() {
     let json_obj = json!({
         "school": {
             "friends": [
@@ -271,8 +268,8 @@ fn readme_select() {
     );
 }
 
-#[test]
-fn readme_select_as_str() {
+//#[test]
+pub fn readme_select_as_str() {
     let ret = jsonpath::select_as_str(
         r#"
     {
@@ -298,8 +295,8 @@ fn readme_select_as_str() {
     );
 }
 
-#[test]
-fn readme_select_as() {
+//#[test]
+pub fn readme_select_as() {
     #[derive(Deserialize, PartialEq, Debug)]
     struct Person {
         name: String,
@@ -332,8 +329,8 @@ fn readme_select_as() {
     assert_eq!(ret[0], person);
 }
 
-#[test]
-fn readme_compile() {
+//#[test]
+pub fn readme_compile() {
     let mut first_firend = jsonpath::compile("$..friends[0]");
 
     let json_obj = json!({
@@ -359,8 +356,8 @@ fn readme_compile() {
     );
 }
 
-#[test]
-fn readme_selector_fn() {
+//#[test]
+pub fn readme_selector_fn() {
     let json_obj = json!({
         "school": {
             "friends": [
@@ -396,8 +393,8 @@ fn readme_selector_fn() {
     );
 }
 
-#[test]
-fn readme_selector_as() {
+//#[test]
+pub fn readme_selector_as() {
     let json_obj = json!({
         "school": {
            "friends": [
@@ -448,8 +445,8 @@ fn readme_selector_as() {
     assert_eq!(json, ret);
 }
 
-#[test]
-fn readme_delete() {
+//#[test]
+pub fn readme_delete() {
     let json_obj = json!({
         "school": {
             "friends": [
@@ -480,9 +477,9 @@ fn readme_delete() {
     );
 }
 
-#[test]
-fn readme_delete2() {
-    let json_obj = common::read_json("./benchmark/example.json");
+//#[test]
+pub fn readme_delete2() {
+    let json_obj = common::read_json("example.json");
 
     let ret = jsonpath::delete(json_obj, "$.store.book").unwrap();
 
@@ -501,8 +498,8 @@ fn readme_delete2() {
     );
 }
 
-#[test]
-fn readme_replace_with() {
+//#[test]
+pub fn readme_replace_with() {
     let json_obj = json!({
         "school": {
             "friends": [

@@ -2,11 +2,16 @@ extern crate env_logger;
 extern crate jsonpath_lib as jsonpath;
 extern crate serde_json;
 
-use std::io::Read;
-
 use serde_json::Value;
-
 use self::jsonpath::Selector;
+
+use std::io::Read;
+use std::string::String;
+use std::vec::Vec;
+use std::untrusted::fs;
+use std::path::Path;
+
+const BENCHMARK_PATH: &str = "../../../benchmark";
 
 #[allow(dead_code)]
 pub fn setup() {
@@ -14,16 +19,18 @@ pub fn setup() {
 }
 
 #[allow(dead_code)]
-pub fn read_json(path: &str) -> Value {
-    let mut f = std::fs::File::open(path).unwrap();
+pub fn read_json(file_name: &str) -> Value {
+    let path = Path::new(BENCHMARK_PATH).join(file_name);
+    let mut f = fs::File::open(path).unwrap();
     let mut contents = String::new();
     f.read_to_string(&mut contents).unwrap();
     serde_json::from_str(&contents).unwrap()
 }
 
 #[allow(dead_code)]
-pub fn read_contents(path: &str) -> String {
-    let mut f = std::fs::File::open(path).unwrap();
+pub fn read_contents(file_name: &str) -> String {
+    let path = Path::new(BENCHMARK_PATH).join(file_name);
+    let mut f = fs::File::open(path).unwrap();
     let mut contents = String::new();
     f.read_to_string(&mut contents).unwrap();
     contents

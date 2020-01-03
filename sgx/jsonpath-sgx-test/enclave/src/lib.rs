@@ -36,9 +36,14 @@ extern crate sgx_types;
 #[cfg(not(target_env = "sgx"))]
 #[macro_use]
 extern crate sgx_tstd as std;
-extern crate jsonpath;
-
 extern crate sgx_tunittest;
+
+extern crate jsonpath_lib as jsonpath;
+extern crate serde;
+#[macro_use]
+extern crate serde_json;
+
+use std::prelude::v1::*;
 
 use sgx_tunittest::*;
 use sgx_types::*;
@@ -80,36 +85,42 @@ pub extern "C" fn say_something(some_string: *const u8, some_len: usize) -> sgx_
     println!("{}", &hello_string);
 
     rsgx_unit_tests!(
-        filter_test::array(),
-        filter_test::return_type(),
-        filter_test::op_default(),
-        filter_test::op_number(),
-        filter_test::op_string(),
-        filter_test::op_object(),
-        filter_test::op_complex(),
-        filter_test::op_compare(),
-        filter_test::example(),
-        filter_test::filer_same_obj(),
-        filter_test::range(),
-        filter_test::quote(),
-        filter_test::all_filter(),
-        filter_test::current_path(),
-        readme::readme(),
-        readme::readme_selector(),
-        readme::readme_selector_mut(),
-        readme::readme_select(),
-        readme::readme_select_as_str(),
-        readme::readme_select_as(),
-        readme::readme_compile(),
-        readme::readme_selector_fn(),
-        readme::readme_selector_as(),
-        readme::readme_delete(),
-        readme::readme_delete2(),
-        readme::readme_replace_with(),
-        selector_test::selector_mut(),
-        selector_test::selector_node_ref(),
-        selector_test::selector_delete(),
-        selector_test::selector_remove(),
+        filter_test::array,
+        filter_test::return_type,
+        filter_test::op_default,
+        filter_test::op_number,
+        filter_test::op_string,
+        filter_test::op_object,
+        filter_test::op_complex,
+        filter_test::op_compare,
+        filter_test::example,
+        filter_test::filer_same_obj,
+        filter_test::range,
+        filter_test::quote,
+        filter_test::all_filter,
+        filter_test::current_path,
+        readme_test::readme,
+        readme_test::readme_selector,
+        readme_test::readme_selector_mut,
+        readme_test::readme_select,
+        readme_test::readme_select_as_str,
+        readme_test::readme_select_as,
+        readme_test::readme_compile,
+        readme_test::readme_selector_fn,
+        readme_test::readme_selector_as,
+        readme_test::readme_delete,
+        readme_test::readme_delete2,
+        readme_test::readme_replace_with,
+        selector_test::selector_mut,
+        selector_test::selector_node_ref,
+        selector_test::selector_delete,
+        selector_test::selector_remove,
+        lib_test::compile,
+        lib_test::selector,
+        lib_test::selector_as,
+        lib_test::select,
+        lib_test::select_str,
+        lib_test::test_to_struct,
     );
 
     println!("All tests finished!");

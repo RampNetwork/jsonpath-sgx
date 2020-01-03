@@ -1,0 +1,11 @@
+target
+Cargo.lock
+Enclave_t.*
+Enclave_u.*
+lib/*
+!lib/readme.txt
+libEnclave_u.*
+libenclave.*
+bin/*
+!bin/readme.txt
+app/libEnclave_u.a

@@ -1,6 +1,8 @@
 mod path_reader;
 mod tokenizer;
 
+use std::prelude::v1::*;
+
 use std::str::FromStr;
 
 use self::tokenizer::*;
@@ -11,6 +13,7 @@ type ParseResult<T> = Result<T, String>;
 
 mod utils {
     use std::str::FromStr;
+    use std::string::String;
 
     pub fn string_to_num<F, S: FromStr>(string: &str, msg_handler: F) -> Result<S, String>
     where

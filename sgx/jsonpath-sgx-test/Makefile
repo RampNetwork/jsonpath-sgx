@@ -28,8 +28,8 @@
 #
 
 ######## SGX SDK Settings ########
-SGX_SDK_RUST ?= $(HOME)/sgx
-SGX_SDK ?= /opt/sgxsdk
+
+SGX_SDK ?= /opt/intel/sgxsdk
 SGX_MODE ?= HW
 SGX_ARCH ?= x64
 
@@ -60,19 +60,16 @@ endif
 
 ifeq ($(SGX_DEBUG), 1)
 	SGX_COMMON_CFLAGS += -O0 -g
-	Rust_target_dir := debug
 else
 	SGX_COMMON_CFLAGS += -O2
-	App_Rust_Flags := --release
-	Rust_target_dir := release
 endif
 
 ######## CUSTOM Settings ########
 
 CUSTOM_LIBRARY_PATH := ./lib
 CUSTOM_BIN_PATH := ./bin
-CUSTOM_EDL_PATH := $(SGX_SDK_RUST)/edl
-CUSTOM_COMMON_PATH := $(SGX_SDK_RUST)/common
+CUSTOM_EDL_PATH := edl
+CUSTOM_COMMON_PATH := common
 
 ######## EDL Settings ########
 
@@ -80,12 +77,12 @@ Enclave_EDL_Files := enclave/Enclave_t.c enclave/Enclave_t.h app/Enclave_u.c app
 
 ######## APP Settings ########
 
-App_Rust_Flags += $(if $(JOBS),-j$(JOBS), )
+App_Rust_Flags := --release
 App_SRC_Files := $(shell find app/ -type f -name '*.rs') $(shell find app/ -type f -name 'Cargo.toml')
-App_Include_Paths := -I ./app -I./include -I$(SGX_SDK)/include -I$(CUSTOM_EDL_PATH) -I./enclave
+App_Include_Paths := -I ./app -I./include -I$(SGX_SDK)/include -I$(CUSTOM_EDL_PATH)
 App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes $(App_Include_Paths)
 
-App_Rust_Path := ./app/target/$(Rust_target_dir)
+App_Rust_Path := ./app/target/release
 App_Enclave_u_Object :=app/libEnclave_u.a
 App_Name := bin/app
 
@@ -104,13 +101,13 @@ ProtectedFs_Library_Name := sgx_tprotected_fs
 
 RustEnclave_C_Files := $(wildcard ./enclave/*.c)
 RustEnclave_C_Objects := $(RustEnclave_C_Files:.c=.o)
-RustEnclave_Include_Paths := -I $(CUSTOM_EDL_PATH) -I$(CUSTOM_COMMON_PATH)/inc -I$(CUSTOM_COMMON_PATH) -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport -I$(SGX_SDK)/include/epid -I ./enclave -I./include
+RustEnclave_Include_Paths := -I$(CUSTOM_COMMON_PATH)/inc -I$(CUSTOM_EDL_PATH) -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport -I$(SGX_SDK)/include/epid -I ./enclave -I./include
 
-RustEnclave_Link_Libs := -L$(CUSTOM_LIBRARY_PATH) -lcompiler-rt-patch -lenclave
+RustEnclave_Link_Libs := -L$(CUSTOM_LIBRARY_PATH) -lenclave
 RustEnclave_Compile_Flags := $(SGX_COMMON_CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector $(RustEnclave_Include_Paths)
 RustEnclave_Link_Flags := $(SGX_COMMON_CFLAGS) -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
-	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
-	-Wl,--start-group -lsgx_tstdc -l$(Service_Library_Name) -l$(Crypto_Library_Name) $(RustEnclave_Link_Libs) -Wl,--end-group \
+	-Wl,--whole-archive -l$(Trts_Library_Name) -l$(Service_Library_Name) -Wl,--no-whole-archive \
+	-Wl,--start-group -lsgx_tcxx -lsgx_tstdc -l$(Crypto_Library_Name) $(RustEnclave_Link_Libs) -Wl,--end-group \
 	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
 	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
 	-Wl,--defsym,__ImageBase=0 \
@@ -126,8 +123,8 @@ all: $(App_Name) $(Signed_RustEnclave_Name)
 ######## EDL Objects ########
 
 $(Enclave_EDL_Files): $(SGX_EDGER8R) enclave/Enclave.edl
-	$(SGX_EDGER8R) --trusted enclave/Enclave.edl --search-path $(SGX_SDK)/include --search-path $(CUSTOM_EDL_PATH) --trusted-dir enclave
-	$(SGX_EDGER8R) --untrusted enclave/Enclave.edl --search-path $(SGX_SDK)/include --search-path $(CUSTOM_EDL_PATH) --untrusted-dir app
+	$(SGX_EDGER8R) --trusted enclave/Enclave.edl --search-path $(SGX_SDK)/include --search-path edl --trusted-dir enclave
+	$(SGX_EDGER8R) --untrusted enclave/Enclave.edl --search-path $(SGX_SDK)/include --search-path edl --untrusted-dir app
 	@echo "GEN  =>  $(Enclave_EDL_Files)"
 
 ######## App Objects ########
@@ -141,7 +138,7 @@ $(App_Enclave_u_Object): app/Enclave_u.o
 	cp $(App_Enclave_u_Object) ./lib
 
 $(App_Name): $(App_Enclave_u_Object) $(App_SRC_Files)
-	cd app && SGX_SDK=$(SGX_SDK) cargo build $(App_Rust_Flags)
+	@cd app && SGX_SDK=$(SGX_SDK) cargo build $(App_Rust_Flags)
 	@echo "Cargo  =>  $@"
 	cp $(App_Rust_Path)/app ./bin
 
@@ -151,8 +148,7 @@ enclave/Enclave_t.o: $(Enclave_EDL_Files)
 	@$(CC) $(RustEnclave_Compile_Flags) -c enclave/Enclave_t.c -o $@
 	@echo "CC   <=  $<"
 
-$(RustEnclave_Name): enclave compiler-rt enclave/Enclave_t.o
-	cp $(SGX_SDK_RUST)/compiler-rt/libcompiler-rt-patch.a ./lib
+$(RustEnclave_Name): enclave enclave/Enclave_t.o
 	@$(CXX) enclave/Enclave_t.o -o $@ $(RustEnclave_Link_Flags)
 	@echo "LINK =>  $@"
 
@@ -163,13 +159,14 @@ $(Signed_RustEnclave_Name): $(RustEnclave_Name)
 .PHONY: enclave
 enclave:
 	$(MAKE) -C ./enclave/
+	git checkout ../../src
 
 .PHONY: compiler-rt
 compiler-rt:
-	$(MAKE) -C $(SGX_SDK_RUST)/compiler-rt/ 2> /dev/null
+	$(MAKE) -C ../../compiler-rt/ 2> /dev/null
 
 .PHONY: clean
 clean:
-	@rm -f $(App_Name) $(RustEnclave_Name) $(Signed_RustEnclave_Name) enclave/*_t.* app/*_u.* lib/*.a *.c *.h *.p *.a
+	@rm -f $(App_Name) $(RustEnclave_Name) $(Signed_RustEnclave_Name) enclave/*_t.* app/*_u.* lib/*.a
 	@cd enclave && cargo clean && rm -f Cargo.lock
 	@cd app && cargo clean && rm -f Cargo.lock
